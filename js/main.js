@@ -5,9 +5,6 @@ requirejs.config({
 		'complexfft': "lib/complex"
 	},
 	shim: {
-		'react': {
-			'exports': "React"
-		},
 		'realfft': {
 			'exports': "FFT"
 		},
