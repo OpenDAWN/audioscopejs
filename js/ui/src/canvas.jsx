@@ -14,7 +14,7 @@ define(['react'], function(React) {
 		return gl;
 	}
 
-	var WebglCanvas = React.createComponent({
+	var WebglCanvas = React.createClass({
 		componentDidMount: function() {
 			canvas = this.refs.canvas.getDOMNode();
 		},
