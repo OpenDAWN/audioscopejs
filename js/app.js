@@ -1,11 +1,10 @@
-define(['ui/canvas'], function(WebglCanvas) {
+define(['ui/canvas', 'audio/analyzer'], function(WebglCanvas, analyzer) {
 
 	return {
 		init: function() {
 			WebglCanvas.init();
 			var gl = WebglCanvas.getContext();
-			var audio = new AudioContext();
-			console.log(gl, audio);
+
 		}
 	};
 });
