@@ -1,4 +1,4 @@
-define(['circlebuf','hilbert'], function(CircleBuf, HilbertNode) {
+define(['audio/circlebuf','audio/hilbert'], function(CircleBuf, HilbertNode) {
 	var FS = 44100;
 	var L = 0,
 		R = 1,

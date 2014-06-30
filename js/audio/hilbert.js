@@ -15,5 +15,5 @@ define(function() {
 		conv.buffer = makeBuf(audio, FS);
 		return conv;
 	}
-	return hilbertNode;
+	return HilbertNode;
 });

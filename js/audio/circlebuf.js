@@ -1,58 +1,49 @@
 /**
- * CircleBuf: Circular buffer made of float arrays
+ * CircleBuf: Circular buffer made of a float array
  */
 define(function() {
 
 	/**
-	 * bufLength: length of each buffer
-	 * numBuf: Number of buffers
+	 * bufLength: length of buffer
 	 */
-	function CircleBuf(bufLength, numBuf) {
-		this.bufs = [];
-		this.bufLength = bufLength;
-		this.length = bufLength * numBuf;
-		this.numBuf = numBuf;
-		this.curBufIndex = 0;
-		for (var i = 0; i < numBuf; i++) {
-			this.bufs.push(new Float32Array(bufLength));
-		}
+	function CircleBuf(bufLength) {
+		this.buf = new Float32Array(bufLength);
+		this.totalLen = 0;
+		this.delay = 0;
 	}
 
 	CircleBuf.prototype = {
-		get curBuf() {
-			return this.bufs[this.curBufIndex];
+		get curIndex() {
+			return this.totalLen % this.buf.length;
 		},
 		/**
-		 * overwrites the last buffer with new input
-		 * input: some array with length == bufLength
+		 * Puts the input into the buffer, overwriting the oldest values
+		 * input: some array with length <= buf.length
 		 */
 		put: function(input) {
-			this.curBuf.set(input);
-			this.curBufIndex = (this.curBufIndex + 1) % this.numBuf;
+			if (this.curIndex + input.length <= this.buf.length) {
+				this.buf.set(input, this.curIndex);
+			} else {
+				for (var i = 0; i < input.length; i++) {
+					this.buf[(this.curIndex + i) % this.buf.length] = input[i];
+				}
+			}
+			this.totalLen += input.length;
 		},
 		/**
-		 * Retrieves everything from the current buffer and previous buffers
-		 * bufLength <= output.length <= numBuf*bufLength
+		 * Puts some of the buffer into the output
+		 * end is exclusive, end <= total length to keep it causal
+		 * output.length < buf.length
 		 */
-		get: function(output, offset) {
-			var i;
-			var startBufIndex = offset / this.bufLength,
-				startOffset = offset % this.bufLength,
-				startLength = this.bufLength - startOffset;
-			var endBufIndex = (offset + length) / this.bufLength,
-				endOffset = (startOffset + output.length) / this.bufLength - startOffset,
-				endLength = this.length - endOffset;
-			offset = offset % this.bufLength;
-			for (i = 0; i < startLength; i++) {
-				output[i] = this.bufs[startBufIndex][i + startOffset];
+		get: function(output, end) {
+			if (end - this.delay > this.totalLen) {
+				this.delay = end - this.totalLen;
 			}
-			for (i = 0; i < endLength; i++) {
-				output[i + endOffset] = this.bufs[endBufIndex][i];
+			end = (end - this.delay + this.buf.length) % this.buf.length;
+			var start = (end - output.length + this.buf.length) % this.buf.length;
+			for (var i = 0; i < output.length; i++) {
+				output[i] = this.buf[(start + i) % this.buf.length];
 			}
-			for (var b = startBufIndex; b !== endBufIndex; b = (b + 1) % this.numBuf) {
-				output.set(this.bufs[b], startOffset + ((b - startBufIndex) % this.numBuf) * this.bufLength);
-			}
-			/* i should probably do it the simpler way */
 		}
 	};
 	return CircleBuf;

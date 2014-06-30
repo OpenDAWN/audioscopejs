@@ -1,4 +1,4 @@
-define(['input', 'buffer'], function(input, Buffer) {
+define(['audio/input', 'audio/quadBuffer'], function(input, QuafBuffer) {
 	var PROCESSOR_BUFFER_SIZE = 256;
 
 	var Analyzer = {};
@@ -6,10 +6,10 @@ define(['input', 'buffer'], function(input, Buffer) {
 
 	Analyzer.init = function() {
 		audio = new AudioContext();
-		var buffer = new Buffer(audio, PROCESSOR_BUFFER_SIZE);
+		// var buffer = new Buffer(audio, PROCESSOR_BUFFER_SIZE);
 
 		input.getUserMedia(function(inputNode) {
-			buffer.connectToSource(inputNode);
+			// buffer.connectToSource(inputNode);
 		});
 	};
 	return Analyzer;
