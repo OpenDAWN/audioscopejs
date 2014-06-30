@@ -6,6 +6,11 @@ define(['audio/circlebuf', 'audio/quadProc', 'audio/quadChan'], function(CircleB
 	var FS = 44100; // samples per second
 	var QUAD = 4; // quadruple/quadratureLR
 
+	/**
+	 * audio: audio context
+	 * length: length of buffer
+	 * stepLength: the size of the buffer that gets samples and puts it in this buffer
+	 */
 	function QuadBuffer(audio, length, stepLength, fs) {
 		this.position = 0;
 		this.bufs = [];
@@ -17,14 +22,29 @@ define(['audio/circlebuf', 'audio/quadProc', 'audio/quadChan'], function(CircleB
 	}
 
 	QuadBuffer.prototype = {
+		/**
+		 * Puts QuadProcessor data into buffer
+		 */
 		onProcess: function(e) {
 			var input = e.inputBuffer;
 			for (var c = 0; c < QUAD; c++) {
-				var channel = input.getChannelData(c);
+				this.bufs[c].put(input.getChannelData(c));
 			}
 		},
-		get: function(output, stepLength) {
-
+		/**
+		 * Makes the position the same as position in the buffer
+		 */
+		refreshPosition: function() {
+			this.position = this.bufs[0].totalLen;
+		},
+		/**
+		 * Puts buffer of particular channel into output
+		 * then moves the position ahead by stepLength
+		 * output.length < buf.length
+		 */
+		get: function(output, channel, stepLength) {
+			this.bufs[channel].get(output, this.position);
+			this.position += stepLength;
 		}
 	};
 
