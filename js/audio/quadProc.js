@@ -15,8 +15,8 @@ define(['audio/hilbert','audio/quadChan'], function(HilbertNode, C) {
 		hilbert.connect(hilbertSplitter);
 		inputSplitter.connect(inputMerger, C.L, C.L);
 		inputSplitter.connect(inputMerger, C.R, C.R);
-		hilbertSplitter.connect(inputMerger, C.L, C.Ls);
-		hilbertSplitter.connect(inputMerger, C.R, C.Rs);
+		hilbertSplitter.connect(inputMerger, C.L, C.LS);
+		hilbertSplitter.connect(inputMerger, C.R, C.RS);
 		inputMerger.connect(processor);
 
 		this.connectToSource = function(source) {
