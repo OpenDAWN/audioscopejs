@@ -1,11 +1,10 @@
-define(function() {
-	var LR = 2;
+define(['audio/quadChan'],function(C) {
 	var N = 1; // length of FIR approximation
 
 	function makeBuf(audio, fs) {
-		var buf = audio.createBuffer(LR, N, fs);
-		buf.getChannelData(0)[0] = 1; // do nothing for now
-		buf.getChannelData(1)[0] = 1;
+		var buf = audio.createBuffer(C.LR, N, fs);
+		buf.getChannelData(C.L)[0] = 1; // do nothing for now
+		buf.getChannelData(C.R)[0] = 1;
 		return buf;
 	}
 
