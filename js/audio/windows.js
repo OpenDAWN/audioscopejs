@@ -8,10 +8,8 @@ define(function() {
 		for (var n = 0; n < length; n++) {
 			w[n] = fn(n, length);
 		}
-		return {
-			name: name,
-			fn: w
-		};
+		this.name = name;
+		this.fn = w;
 	}
 
 	Window.prototype.doWindow = function doWindow(output, input) {
