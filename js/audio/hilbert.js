@@ -1,4 +1,4 @@
-define(['audio/quadChan'],function(C) {
+define(['audio/windows','audio/quadChan'],function(w, C) {
 	var N = 1; // length of FIR approximation
 
 	function makeBuf(audio, fs) {
