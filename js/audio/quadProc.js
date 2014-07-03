@@ -11,7 +11,7 @@ define(['audio/hilbert', 'audio/quadChan'], function(HilbertNode, C) {
 		// apparently it gets gc'd if not referenced...?
 		this.processor = audio.createScriptProcessor(bufLength, C.QUAD, 0);
 		var merger = audio.createChannelMerger(C.QUAD);
-		merger.connect(processor);
+		merger.connect(this.processor);
 
 		var unphasedSplitter = audio.createChannelSplitter(C.LR);
 		this.hilbert.unphasedNode.connect(unphasedSplitter);
