@@ -19,7 +19,9 @@ define(['react'], function(React) {
 			canvas = this.refs.canvas.getDOMNode();
 		},
 		render: function() {
-			return <canvas ref='canvas'></canvas>;
+			return (
+				<canvas ref='canvas'></canvas>
+			);
 		}
 	});
 
