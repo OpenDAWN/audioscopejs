@@ -1,27 +1,31 @@
 /**
  * Quadrature processor node: takes stereo in
  * and gives time domain out with 90˚ phase shift pairs
+ * Due to a non-flat magnitude response, it is recommended to
+ * use +-45˚ phase shift pairs using these quad signals
  */
-define(['audio/hilbert','audio/quadChan'], function(HilbertNode, C) {
+define(['audio/hilbert', 'audio/quadChan'], function(HilbertNode, C) {
 
 	function QuadProcessor(audio, bufLength, onProcess, fs) {
-		var hilbert = new HilbertNode(audio, fs);
+		this.hilbert = new HilbertNode(audio, fs);
 		// apparently it gets gc'd if not referenced...?
 		this.processor = audio.createScriptProcessor(bufLength, C.QUAD, 0);
-		var inputSplitter = audio.createChannelSplitter(C.LR);
-		var hilbertSplitter = audio.createChannelSplitter(C.LR);
-		var inputMerger = audio.createChannelMerger(C.QUAD);
+		var merger = audio.createChannelMerger(C.QUAD);
+		merger.connect(processor);
 
-		hilbert.connect(hilbertSplitter);
-		inputSplitter.connect(inputMerger, C.L, C.L);
-		inputSplitter.connect(inputMerger, C.R, C.R);
-		hilbertSplitter.connect(inputMerger, C.L, C.LS);
-		hilbertSplitter.connect(inputMerger, C.R, C.RS);
-		inputMerger.connect(processor);
+		var unphasedSplitter = audio.createChannelSplitter(C.LR);
+		this.hilbert.unphasedNode.connect(unphasedSplitter);
+		unphasedSplitter.connect(merger, C.L, C.L);
+		unphasedSplitter.connect(merger, C.R, C.R);
+
+		var phasedSplitter = audio.createChannelSplitter(C.LR);
+		this.hilbert.phasedNode.connect(phasedSplitter);
+		phasedSplitter.connect(merger, C.L, C.LS);
+		phasedSplitter.connect(merger, C.R, C.RS);
 
 		this.connectToSource = function(source) {
-			source.connect(inputSplitter);
-			source.connect(hilbertNode);
+			source.connect(this.hilbert.unphasedNode);
+			source.connect(this.hilbert.phasedNode);
 		};
 
 		this.processor.onaudioprocess = onProcess;
