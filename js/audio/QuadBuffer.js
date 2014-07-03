@@ -2,15 +2,17 @@
  * Quadrature Buffer: stores time-domain data of left and right signals
  * and their corresponding hilbert transforms ie 90˚ phase shifts
  */
-define(['audio/circlebuf', 'audio/quadProc', 'audio/quadChan'], function(CircleBuf, QuadProcessor, C) {
-	var FS = 44100; // samples per second
-
+define(['audio/circlebuf',
+	'audio/quadProc',
+	'audio/quadChan'
+], function(CircleBuf, QuadProcessor, C) {
 	/**
 	 * audio: audio context
 	 * length: length of buffer
 	 * stepLength: the size of the buffer that gets samples and puts it in this buffer
 	 */
 	function QuadBuffer(audio, length, stepLength, fs) {
+		length = Math.floor(length);
 		this.position = 0;
 		this.bufs = [];
 		this.bufs[C.L] = new CircleBuf(length);
