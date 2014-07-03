@@ -23,13 +23,12 @@ define(['audio/hilbert', 'audio/quadChan'], function(HilbertNode, C) {
 		phasedSplitter.connect(merger, C.L, C.LS);
 		phasedSplitter.connect(merger, C.R, C.RS);
 
-		this.connectToSource = function(source) {
-			source.connect(this.hilbert.unphasedNode);
-			source.connect(this.hilbert.phasedNode);
-		};
-
 		this.processor.onaudioprocess = onProcess;
 	}
+	QuadProcessor.prototype.connectToSource = function(source) {
+		source.connect(this.hilbert.unphasedNode);
+		source.connect(this.hilbert.phasedNode);
+	};
 	/**
 	 * sets the overall delay (in samples)
 	 * more delay means flatter magnitude response for hilbert
