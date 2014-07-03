@@ -4,7 +4,6 @@
  */
 define(['audio/circlebuf', 'audio/quadProc', 'audio/quadChan'], function(CircleBuf, QuadProcessor, C) {
 	var FS = 44100; // samples per second
-	var QUAD = 4; // quadruple/quadratureLR
 
 	/**
 	 * audio: audio context
@@ -27,7 +26,7 @@ define(['audio/circlebuf', 'audio/quadProc', 'audio/quadChan'], function(CircleB
 		 */
 		onProcess: function(e) {
 			var input = e.inputBuffer;
-			for (var c = 0; c < QUAD; c++) {
+			for (var c = 0; c < C.QUAD; c++) {
 				this.bufs[c].put(input.getChannelData(c));
 			}
 		},

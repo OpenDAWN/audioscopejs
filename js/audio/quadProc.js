@@ -30,5 +30,13 @@ define(['audio/hilbert', 'audio/quadChan'], function(HilbertNode, C) {
 
 		this.processor.onaudioprocess = onProcess;
 	}
+	/**
+	 * sets the overall delay (in samples)
+	 * more delay means flatter magnitude response for hilbert
+	 */
+	QuadProcessor.prototype.setDelay = function(delay) {
+		var N = delay * 2 + 1;
+		this.hilbert.setFilterLength(N);
+	};
 	return QuadProcessor;
 });
