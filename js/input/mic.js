@@ -1,6 +1,8 @@
+/**
+ * Connects to user's microphone and sends it to the callback
+ */
 define(function() {
-	var source = {};
-	source.getUserMedia = function(audio, gotSource) {
+	return function(audio, gotSource) {
 		navigator.getUserMedia({
 			audio: true
 		}, function(stream) {
@@ -11,6 +13,4 @@ define(function() {
 			console.log(e);
 		});
 	};
-
-	return source;
 });
