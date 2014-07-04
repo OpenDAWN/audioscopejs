@@ -15,9 +15,10 @@ requirejs.config({
 });
 
 require(['app'], function(App) {
-	// TODO: polyfill for webaudio and webgl
-	if (!AudioContext) {
-		alert("Your browser does not support Web Audio.");
-	}
+	// polyfills
+	navigator.getUserMedia = (navigator.getUserMedia ||
+		navigator.webkitGetUserMedia ||
+		navigator.mozGetUserMedia ||
+		navigator.msGetUserMedia);
 	App.init();
 });
