@@ -1,7 +1,8 @@
 define(['ui/canvas',
 	'audio/analyzer',
-	'input/Mic'
-], function(WebglCanvas, Analyzer, Mic) {
+	'input/Mic',
+	'input/testTone'
+], function(WebglCanvas, Analyzer, Mic, Tone) {
 	var FPS = 1;
 	var debugLength = 5;
 	var debugArray = {
@@ -24,8 +25,8 @@ define(['ui/canvas',
 			WebglCanvas.init();
 			var gl = WebglCanvas.getContext();
 
-			Mic(audio, function(stream){
-				analyzer.setInput(stream);
+			Tone(audio, function(input){
+				analyzer.setInput(input);
 				debugScope(analyzer);
 			});
 		}
