@@ -3,7 +3,7 @@
  * and outputs frames of various representations of the signals:
  ** Signal combinations **
  * Left / Right
- * Mid / Side
+ * Mid / Side (Left is positive)
  ** Time Domain **
  * Mono amplitude
  ** Frequency Domain **
@@ -15,7 +15,7 @@
  * Mono Magnitude + (instantaneous) Frequency
  * Stereo phase difference + Total magnitude + Panning
  */
-define(['audio/quadBuffer'], function(QuadBuffer) {
+define(['audio/quadBuffer', 'audio/quadChan'], function(QuadBuffer, C) {
 	var BUFFER_LENGTH = 1.0; // seconds
 	var PROCESSOR_STEP_SIZE = 256;
 
@@ -31,21 +31,47 @@ define(['audio/quadBuffer'], function(QuadBuffer) {
 		 * Takes a node producing audio output for analysis
 		 */
 		setInput: function(input) {
-			this.buffer.processor.connectToSource(inputNode);
+			this.buffer.processor.connectToSource(input);
 		},
 		/**
 		 * Sets the delay (in seconds)
 		 * More delay makes more accurate analytic signals
 		 */
 		setDelay: function(delay) {
-			this.buffer.processor.setDelay(delay * this.audio.fs);
+			this.buffer.processor.setDelay(delay * this.audio.sampleRate);
 		},
 		/**
 		 * Sets how frequently frames will be obtained
 		 */
 		setFps: function(fps) {
 			this.stepSize = Math.floor(this.audio.sampleRate / fps);
+		},
+		/**
+		 * Puts buffer data into output arrays
+		 */
+		getLR: function(outL, outR) {
+			this.buffer.get(outL, C.L, this.stepSize);
+			this.buffer.get(outR, C.R, this.stepSize);
+		},
+		getMS: function(outM, outS) {
+			this.getLR(outM, outS);
+			for (var i = 0; i < outM.length; i++) {
+				// var left = outM[i];
+				// var right = outS[i];
+				// outM[i] = (left + right) / 2;
+				// outS[i] = (left - right) / 2;
+				/* you can do the algebra */
+				outM[i] = (outM[i] + outS[i]) / 2;
+				outS[i] = outM[i] - outS[i];
+			}
+		},
+		/**
+		 * Mono functions take one of the ChannelFn from above
+		 */
+		getTimeDomain: function(channelFn, out1, out2) {
+			channelFn.call(this, out1, out2);
 		}
+
 	};
 
 	return Analyzer;
