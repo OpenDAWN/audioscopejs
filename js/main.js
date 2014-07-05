@@ -1,10 +1,14 @@
 requirejs.config({
 	paths: {
 		'react': "lib/react",
+		'three': 'lib/three',
 		'realfft': "lib/real",
 		'complexfft': "lib/complex"
 	},
 	shim: {
+		'three': {
+			'exports': "THREE"
+		},
 		'realfft': {
 			'exports': "FFT"
 		},
