@@ -16,8 +16,8 @@
  * Stereo phase difference + Total magnitude + Panning
  */
 define(['audio/quadBuffer', 'audio/quadChan'], function(QuadBuffer, C) {
-	var BUFFER_LENGTH = 1.0; // seconds
-	var PROCESSOR_STEP_SIZE = 2048; // 1024 may cause skipping
+	var BUFFER_LENGTH = 2.0; // seconds
+	var PROCESSOR_STEP_SIZE = 1024; // 256 causes skipping
 
 	function Analyzer(audio) {
 		var fs = audio.sampleRate;
@@ -44,11 +44,11 @@ define(['audio/quadBuffer', 'audio/quadChan'], function(QuadBuffer, C) {
 		 * Puts buffer data into output arrays
 		 */
 		getLR: function(outL, outR) {
-			this.buffer.get(outL, C.L);
 			this.buffer.get(outR, C.R);
+			return this.buffer.get(outL, C.L);
 		},
 		getMS: function(outM, outS) {
-			this.getLR(outM, outS);
+			var time = this.getLR(outM, outS);
 			for (var i = 0; i < outM.length; i++) {
 				// var left = outM[i];
 				// var right = outS[i];
@@ -58,12 +58,13 @@ define(['audio/quadBuffer', 'audio/quadChan'], function(QuadBuffer, C) {
 				outM[i] = (outM[i] + outS[i]) / 2;
 				outS[i] = outM[i] - outS[i];
 			}
+			return time;
 		},
 		/**
 		 * Mono functions take one of the ChannelFn from above
 		 */
 		getTimeDomain: function(channelFn, out1, out2) {
-			channelFn.call(this, out1, out2);
+			return channelFn.call(this, out1, out2);
 		}
 
 	};

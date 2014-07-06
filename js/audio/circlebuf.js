@@ -36,13 +36,8 @@ define(function() {
 		 * end is exclusive, end <= total length to keep it causal
 		 * output.length < buf.length
 		 */
-		get: function(output, end) {
-			if (end - this.delay > this.totalLen) {
-				this.delay = end - this.totalLen;
-				console.log(this.delay);
-			}
-			end = (end - this.delay + this.buf.length) % this.buf.length;
-			var start = (end - output.length + this.buf.length) % this.buf.length;
+		get: function(output) {
+			var start = (this.totalLen - output.length + this.buf.length) % this.buf.length;
 			for (var i = 0; i < output.length; i++) {
 				output[i] = this.buf[(start + i) % this.buf.length];
 			}

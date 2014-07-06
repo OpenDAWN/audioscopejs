@@ -22,7 +22,6 @@ define(['audio/circlebuf',
 		this.bufs[C.RS] = new CircleBuf(length);
 		this.processor = new QuadProcessor(audio, stepLength, this.onProcess.bind(this));
 	}
-
 	QuadBuffer.prototype = {
 		/**
 		 * Puts QuadProcessor data into buffer
@@ -38,7 +37,8 @@ define(['audio/circlebuf',
 		 * output.length < buf.length
 		 */
 		get: function(output, channel) {
-			this.bufs[channel].get(output, Math.round(this.audio.currentTime * this.fs));
+			this.bufs[channel].get(output);
+			return this.bufs[channel].totalLen;
 		}
 	};
 

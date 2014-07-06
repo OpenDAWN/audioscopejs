@@ -25,7 +25,7 @@ define(['three'], function(THREE) {
 		setData: function(data, time) {
 			var offset = (this.period - (time % this.period))%this.period;
 			for (var i = 0; i < this.length; i++) {
-				this.geometry.vertices[i].setY(data[i+offset]);
+				this.geometry.vertices[this.length - i - 1].setY(data[i+offset]);
 			}
 			// console.log(offset);
 			this.geometry.verticesNeedUpdate = true;
