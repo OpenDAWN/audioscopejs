@@ -41,17 +41,11 @@ define(['audio/quadBuffer', 'audio/quadChan'], function(QuadBuffer, C) {
 			this.buffer.processor.setDelay(delay * this.audio.sampleRate);
 		},
 		/**
-		 * Sets how frequently frames will be obtained
-		 */
-		setFps: function(fps) {
-			this.stepSize = Math.floor(this.audio.sampleRate / fps);
-		},
-		/**
 		 * Puts buffer data into output arrays
 		 */
 		getLR: function(outL, outR) {
-			this.buffer.get(outL, C.L, this.stepSize);
-			this.buffer.get(outR, C.R, this.stepSize);
+			this.buffer.get(outL, C.L);
+			this.buffer.get(outR, C.R);
 		},
 		getMS: function(outM, outS) {
 			this.getLR(outM, outS);

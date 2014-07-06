@@ -4,9 +4,9 @@
  */
 define(['audio/windows', 'audio/quadChan'], function(w, C) {
 
-	function HilbertNode(audio, fs) {
+	function HilbertNode(audio) {
 		this.createBuffer = function(N) {
-			return audio.createBuffer(C.LR, N, fs);
+			return audio.createBuffer(C.LR, N, audio.sampleRate);
 		};
 		// delay node has additional smoothing processing so do this instead
 		this.unphasedNode = audio.createConvolver();

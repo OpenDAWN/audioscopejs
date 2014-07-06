@@ -6,8 +6,8 @@
  */
 define(['audio/hilbert', 'audio/quadChan'], function(HilbertNode, C) {
 
-	function QuadProcessor(audio, bufLength, onProcess, fs) {
-		this.hilbert = new HilbertNode(audio, fs);
+	function QuadProcessor(audio, bufLength, onProcess) {
+		this.hilbert = new HilbertNode(audio);
 		// apparently it gets gc'd if not referenced...?
 		this.processor = audio.createScriptProcessor(bufLength, C.QUAD);
 		var merger = audio.createChannelMerger(C.QUAD);
