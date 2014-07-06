@@ -17,7 +17,7 @@
  */
 define(['audio/quadBuffer', 'audio/quadChan'], function(QuadBuffer, C) {
 	var BUFFER_LENGTH = 1.0; // seconds
-	var PROCESSOR_STEP_SIZE = 256; // 256 may cause skipping
+	var PROCESSOR_STEP_SIZE = 2048; // 1024 may cause skipping
 
 	function Analyzer(audio) {
 		var fs = audio.sampleRate;

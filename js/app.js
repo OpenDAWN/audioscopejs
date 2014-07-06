@@ -4,7 +4,7 @@ define(['ui/canvas',
 	'input/testTone',
 	'visual/visualizer'
 ], function(WebglCanvas, Analyzer, Mic, Tone, Visualizer) {
-	var debugLength = 64;
+	var debugLength = 1024;
 	var debugArray = {
 		L: new Float32Array(debugLength),
 		R: new Float32Array(debugLength)
@@ -31,12 +31,19 @@ define(['ui/canvas',
 			var canvas = document.querySelector("canvas");
 			Visualizer.init(canvas);
 			Visualizer.vis = Visualizer.createWaveform(debugLength);
+			Visualizer.setOptions({
+				length: 255,
+				period: 255
+			});
 
+			var i = 0;
 			function mainLoop() {
-				analyzer.getTimeDomain(analyzer.getLR, debugArray.L, debugArray.R);
-				Visualizer.setData(debugArray.L);
-				Visualizer.render();
 				requestAnimationFrame(mainLoop);
+				// i = (i+1)%10;
+				// if (i > 0) return;
+				analyzer.getTimeDomain(analyzer.getLR, debugArray.L, debugArray.R);
+				Visualizer.setData(debugArray.L, Math.round(audio.currentTime*audio.sampleRate));
+				Visualizer.render();
 			}
 			mainLoop();
 

@@ -39,7 +39,7 @@ define(function() {
 		get: function(output, end) {
 			if (end - this.delay > this.totalLen) {
 				this.delay = end - this.totalLen;
-				// console.log(this.delay);
+				console.log(this.delay);
 			}
 			end = (end - this.delay + this.buf.length) % this.buf.length;
 			var start = (end - output.length + this.buf.length) % this.buf.length;
