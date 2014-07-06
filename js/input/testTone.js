@@ -1,13 +1,22 @@
 define(function() {
 	return function(audio, callback) {
 		var osc = audio.createOscillator();
-		osc.type = osc.SAWTOOTH;
-		osc.frequency.value = audio.sampleRate/4094;
+		osc.type = osc.SINE;
+		osc.frequency.value = audio.sampleRate/256;
 		osc.start();
 		var merger = audio.createChannelMerger(2);
 		osc.connect(merger, 0, 0);
 		osc.connect(merger, 0, 1);
-		// osc.connect(audio.destination);
+		var i = false;
+		setInterval(function(){
+			if (i) {
+				osc.frequency.value = audio.sampleRate/256;
+			} else {
+				osc.frequency.value = 2*audio.sampleRate/256;
+			}
+			i = !i;
+		}, 1000)
+		osc.connect(audio.destination);
 		callback(merger);
 	};
 });

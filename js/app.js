@@ -4,7 +4,7 @@ define(['ui/canvas',
 	'input/testTone',
 	'visual/visualizer'
 ], function(WebglCanvas, Analyzer, Mic, Tone, Visualizer) {
-	var debugLength = 2*4096;
+	var debugLength = 2*256;
 	var debugArray = {
 		L: new Float32Array(debugLength),
 		R: new Float32Array(debugLength)
@@ -32,8 +32,8 @@ define(['ui/canvas',
 			Visualizer.init(canvas);
 			Visualizer.vis = Visualizer.createWaveform(debugLength);
 			Visualizer.setOptions({
-				length: 4096,
-				period: 4096
+				length: 256,
+				period: 256
 			});
 
 			var i = 0;
