@@ -1,9 +1,9 @@
 define(['three'], function(THREE) {
 
-	function Waveform(renderer) {
+	function Waveform(renderer, maxLength) {
 		this.renderer = renderer;
 		this.scene = new THREE.Scene();
-		this.camera = new THREE.OrthographicCamera(-1, 1, -1, 1, 0, 1);
+		this.camera = new THREE.OrthographicCamera(0, 1, -1, 1, 0, 1);
 		this.camera.position.set(0, 0, 1);
 		this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
@@ -12,24 +12,25 @@ define(['three'], function(THREE) {
 		});
 
 		this.geometry = new THREE.Geometry();
-		this.geometry.vertices.push(new THREE.Vector3(-1, 0, 0));
-		this.geometry.vertices.push(new THREE.Vector3(0, 1, 0));
-		this.geometry.vertices.push(new THREE.Vector3(1, 0, 0));
 		this.geometry.dynamic = true;
+		for (var i = 0; i < maxLength; i++) {
+			this.geometry.vertices.push(new THREE.Vector3(i/maxLength, 0, 0));
+		}
 
 		this.line = new THREE.Line(this.geometry, this.material);
 		this.scene.add(this.line);
-
-		this.i = 0;
 	}
 
 	Waveform.prototype = {
-		setData: function(data) {},
+		setData: function(data) {
+			for (var i = 0; i < this.geometry.vertices.length; i++) {
+				this.geometry.vertices[i].setX(i / data.length);
+				this.geometry.vertices[i].setY(data[i] || 0);
+			}
+			this.geometry.verticesNeedUpdate = true;
+		},
 		setOptions: function(options) {},
 		render: function() {
-			this.geometry.vertices[1].setY(1 * Math.sin(this.i / 20));
-			this.i++;
-			this.geometry.verticesNeedUpdate = true;
 			this.renderer.render(this.scene, this.camera);
 		}
 	};

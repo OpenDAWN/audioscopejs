@@ -13,6 +13,7 @@ define(['audio/circlebuf',
 	 */
 	function QuadBuffer(audio, length, stepLength) {
 		this.audio = audio;
+		this.fs = this.audio.sampleRate;
 		length = Math.floor(length);
 		this.bufs = [];
 		this.bufs[C.L] = new CircleBuf(length);
@@ -37,7 +38,7 @@ define(['audio/circlebuf',
 		 * output.length < buf.length
 		 */
 		get: function(output, channel) {
-			this.bufs[channel].get(output, this.audio.currentTime * this.audio.sampleRate);
+			this.bufs[channel].get(output, this.audio.currentTime * this.fs);
 		}
 	};
 

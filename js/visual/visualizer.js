@@ -12,10 +12,10 @@ define(['visual/waveform'], function(Waveform) {
 				window.requestAnimationFrame(function() {
 					this.renderer.setSize(window.innerWidth, window.innerHeight);
 				}.bind(this));
-			};
+			}.bind(this);
 		},
-		createWaveform: function() {
-			return new Waveform(this.renderer);
+		createWaveform: function(maxLength) {
+			return new Waveform(this.renderer, maxLength);
 		},
 		setData: function(data) {
 			this.vis.setData(data);
