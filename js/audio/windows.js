@@ -19,7 +19,7 @@ define(function() {
 	};
 
 	function makeWindowFn(coeffs) {
-		return function(n, N) {
+		return function windowFn(n, N) {
 			return coeffs.map(function(a, k) {
 				return a * Math.cos(2 * Math.PI * k * n / (N - 1));
 			}).reduce(function(x, y) {

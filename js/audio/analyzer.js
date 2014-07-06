@@ -27,7 +27,7 @@ define(['audio/quadBuffer', 'audio/quadChan'], function(QuadBuffer, C) {
 			period: PROCESSOR_STEP_SIZE,
 			offset: 0
 		};
-		this.setDelay(0);
+		this.setDelay(0); // or 1023 for quad
 	}
 
 	Analyzer.prototype = {
@@ -39,11 +39,11 @@ define(['audio/quadBuffer', 'audio/quadChan'], function(QuadBuffer, C) {
 			this.buffer.processor.connectToSource(input);
 		},
 		/**
-		 * Sets the delay (in seconds)
+		 * Sets the delay (in samples)
 		 * More delay makes more accurate analytic signals
 		 */
 		setDelay: function(delay) {
-			this.buffer.processor.setDelay(delay * this.audio.sampleRate);
+			this.buffer.processor.setDelay(delay);
 		},
 		/**
 		 *	Sets the interval

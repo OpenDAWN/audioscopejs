@@ -5,7 +5,7 @@
 define(['audio/windows', 'audio/quadChan'], function(w, C) {
 
 	function HilbertNode(audio) {
-		this.createBuffer = function(N) {
+		this.createBuffer = function createBuffer(N) {
 			return audio.createBuffer(C.LR, N, audio.sampleRate);
 		};
 		// delay node has additional smoothing processing so do this instead

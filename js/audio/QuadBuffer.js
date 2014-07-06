@@ -28,7 +28,7 @@ define(['audio/circlebuf',
 		 */
 		onProcess: function(e) {
 			var input = e.inputBuffer;
-			for (var c = 0; c < C.LR; c++) {
+			for (var c = 0; c < C.QUAD; c++) {
 				this.bufs[c].put(input.getChannelData(c));
 			}
 		},
