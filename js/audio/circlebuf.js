@@ -36,8 +36,8 @@ define(function() {
 		 * end is exclusive, end <= total length to keep it causal
 		 * output.length < buf.length
 		 */
-		get: function(output) {
-			var start = (this.totalLen - output.length + this.buf.length) % this.buf.length;
+		get: function(output, offset) {
+			var start = (this.totalLen - output.length - offset + this.buf.length) % this.buf.length;
 			for (var i = 0; i < output.length; i++) {
 				output[i] = this.buf[(start + i) % this.buf.length];
 			}

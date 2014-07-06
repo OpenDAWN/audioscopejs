@@ -17,8 +17,8 @@ define(['visual/waveform'], function(Waveform) {
 		createWaveform: function(maxLength) {
 			return new Waveform(this.renderer, maxLength);
 		},
-		setData: function(data, time) {
-			this.vis.setData(data, time);
+		setData: function(data) {
+			this.vis.setData(data);
 		},
 		setOptions: function(options) {
 			this.vis.setOptions(options);

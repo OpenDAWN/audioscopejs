@@ -22,12 +22,10 @@ define(['three'], function(THREE) {
 	}
 
 	Waveform.prototype = {
-		setData: function(data, time) {
-			var offset = (this.period - (time % this.period))%this.period;
+		setData: function(data) {
 			for (var i = 0; i < this.length; i++) {
-				this.geometry.vertices[this.length - i - 1].setY(data[i+offset]);
+				this.geometry.vertices[this.length - i - 1].setY(data[i]);
 			}
-			// console.log(offset);
 			this.geometry.verticesNeedUpdate = true;
 		},
 		setOptions: function(options) {
@@ -39,7 +37,6 @@ define(['three'], function(THREE) {
 				}
 				this.geometry.verticesNeedUpdate = true;
 			}
-			this.period = options.period || this.period;
 		},
 		render: function() {
 			this.renderer.render(this.scene, this.camera);

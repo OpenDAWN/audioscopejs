@@ -23,6 +23,11 @@ define(['audio/quadBuffer', 'audio/quadChan'], function(QuadBuffer, C) {
 		var fs = audio.sampleRate;
 		this.audio = audio;
 		this.buffer = new QuadBuffer(audio, BUFFER_LENGTH * fs, PROCESSOR_STEP_SIZE, fs);
+		this.trigger = {
+			period: PROCESSOR_STEP_SIZE,
+			offset: 0
+		};
+		this.setDelay(0);
 	}
 
 	Analyzer.prototype = {
@@ -41,11 +46,25 @@ define(['audio/quadBuffer', 'audio/quadChan'], function(QuadBuffer, C) {
 			this.buffer.processor.setDelay(delay * this.audio.sampleRate);
 		},
 		/**
+		 *	Sets the interval
+		 */
+		setTrigger: function(trigger) {
+			this.trigger.period = trigger.period || this.trigger.period;
+			this.trigger.offset = trigger.offset % this.trigger.period || this.trigger.offset;
+		},
+		get offset() {
+			var period = this.trigger.period;
+			return (period + (this.time % period) - this.trigger.offset) % period;
+		},
+		get time() {
+			return this.buffer.time;
+		},
+		/**
 		 * Puts buffer data into output arrays
 		 */
 		getLR: function(outL, outR) {
-			this.buffer.get(outR, C.R);
-			return this.buffer.get(outL, C.L);
+			this.buffer.get(outL, C.L, this.offset);
+			this.buffer.get(outR, C.R, this.offset);
 		},
 		getMS: function(outM, outS) {
 			var time = this.getLR(outM, outS);
@@ -58,13 +77,12 @@ define(['audio/quadBuffer', 'audio/quadChan'], function(QuadBuffer, C) {
 				outM[i] = (outM[i] + outS[i]) / 2;
 				outS[i] = outM[i] - outS[i];
 			}
-			return time;
 		},
 		/**
 		 * Mono functions take one of the ChannelFn from above
 		 */
 		getTimeDomain: function(channelFn, out1, out2) {
-			return channelFn.call(this, out1, out2);
+			channelFn.call(this, out1, out2);
 		}
 
 	};

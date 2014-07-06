@@ -36,9 +36,11 @@ define(['audio/circlebuf',
 		 * Puts buffer of particular channel into output
 		 * output.length < buf.length
 		 */
-		get: function(output, channel) {
-			this.bufs[channel].get(output);
-			return this.bufs[channel].totalLen;
+		get: function(output, channel, offset) {
+			this.bufs[channel].get(output, offset);
+		},
+		get time() {
+			return this.bufs[0].totalLen;
 		}
 	};
 
