@@ -1,8 +1,9 @@
 define(['ui/canvas',
 	'audio/analyzer',
 	'input/Mic',
-	'input/testTone'
-], function(WebglCanvas, Analyzer, Mic, Tone) {
+	'input/testTone',
+	'visual/visualizer'
+], function(WebglCanvas, Analyzer, Mic, Tone, Visualizer) {
 	var FPS = 1;
 	var debugLength = 5;
 	var debugArray = {
@@ -14,21 +15,29 @@ define(['ui/canvas',
 		console.log(debugArray.L, debugArray.R);
 		setTimeout(debugScope, 1000/FPS, a);
 	}
+	
 
 	return {
 		init: function() {
 			var audio = new AudioContext();
 			var analyzer = new Analyzer(audio);
 			analyzer.setDelay(0);
-			analyzer.setFps(FPS);
 
 			WebglCanvas.init();
-			var gl = WebglCanvas.getContext();
+			var canvas = document.querySelector("canvas");
+			Visualizer.init(canvas);
+			Visualizer.vis = Visualizer.createWaveform();
 
-			Tone(audio, function(input){
-				analyzer.setInput(input);
-				debugScope(analyzer);
-			});
+			function render() {
+				Visualizer.render();
+				requestAnimationFrame(render);
+			}
+			render();
+
+			// Tone(audio, function(input){
+			// 	analyzer.setInput(input);
+			// 	debugScope(analyzer);
+			// });
 		}
 	};
 });
