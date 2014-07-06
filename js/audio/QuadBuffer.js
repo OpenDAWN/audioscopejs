@@ -38,7 +38,7 @@ define(['audio/circlebuf',
 		 * output.length < buf.length
 		 */
 		get: function(output, channel) {
-			this.bufs[channel].get(output, this.audio.currentTime * this.fs);
+			this.bufs[channel].get(output, Math.floor(this.audio.currentTime * this.fs));
 		}
 	};
 
