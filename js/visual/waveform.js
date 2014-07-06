@@ -3,7 +3,7 @@ define(['three'], function(THREE) {
 	function Waveform(renderer, maxLength) {
 		this.renderer = renderer;
 		this.scene = new THREE.Scene();
-		this.camera = new THREE.OrthographicCamera(0, 1, -1, 1, 0, 1);
+		this.camera = new THREE.OrthographicCamera(0, 1, 1, -1, 0, 1);
 		this.camera.position.set(0, 0, 1);
 		this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
@@ -25,7 +25,7 @@ define(['three'], function(THREE) {
 		setData: function(data) {
 			for (var i = 0; i < this.geometry.vertices.length; i++) {
 				this.geometry.vertices[i].setX(i / (data.length-1));
-				this.geometry.vertices[i].setY(data[i] || 0.5);
+				this.geometry.vertices[i].setY(data[i]);
 			}
 			this.geometry.verticesNeedUpdate = true;
 		},

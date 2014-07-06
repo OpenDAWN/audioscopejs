@@ -10,6 +10,7 @@ define(function() {
 		this.buf = new Float32Array(bufLength);
 		this.totalLen = 0;
 		this.delay = 0;
+
 	}
 
 	CircleBuf.prototype = {
@@ -38,12 +39,19 @@ define(function() {
 		get: function(output, end) {
 			if (end - this.delay > this.totalLen) {
 				this.delay = end - this.totalLen;
+				// console.log(this.delay);
 			}
 			end = (end - this.delay + this.buf.length) % this.buf.length;
 			var start = (end - output.length + this.buf.length) % this.buf.length;
 			for (var i = 0; i < output.length; i++) {
 				output[i] = this.buf[(start + i) % this.buf.length];
 			}
+		},
+		/**
+		 * Use in case scriptprocessingnode gets blocked
+		 */
+		resetDelay: function() {
+			this.delay = 0;
 		}
 	};
 	return CircleBuf;
