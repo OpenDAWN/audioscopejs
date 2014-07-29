@@ -24,7 +24,7 @@ define(['three'], function(THREE) {
 	Waveform.prototype = {
 		setData: function(data) {
 			for (var i = 0; i < this.length; i++) {
-				this.geometry.vertices[this.length - i - 1].setY(data[i]);
+				this.geometry.vertices[this.length - i - 1].setY(data[i]/42);
 			}
 			this.geometry.verticesNeedUpdate = true;
 		},

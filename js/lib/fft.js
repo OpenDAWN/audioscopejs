@@ -19,98 +19,102 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-if (!FFT) {
-	var FFT = {}
-}
-
-void function (namespace) {
+(function export_FFT(root, factory) {
+	if (typeof define === "function" && define.amd) {
+		define([], factory)
+	} else if (typeof exports === 'object') {
+		module.exports = factory()
+	} else {
+		root.FFT = factory()
+	}
+}(this, function module_FFT() {
 	"use strict"
-	
+
 	function butterfly2(output, outputOffset, outputStride, fStride, state, m) {
 		var t = state.twiddle
-		
+
 		for (var i = 0; i < m; i++) {
 			var s0_r = output[2 * ((outputOffset) + (outputStride) * (i))], s0_i = output[2 * ((outputOffset) + (outputStride) * (i)) + 1]
 			var s1_r = output[2 * ((outputOffset) + (outputStride) * (i + m))], s1_i = output[2 * ((outputOffset) + (outputStride) * (i + m)) + 1]
-			
+
 			var t1_r = t[2 * ((0) + (fStride) * (i))], t1_i = t[2 * ((0) + (fStride) * (i)) + 1]
-			
+
 			var v1_r = s1_r * t1_r - s1_i * t1_i, v1_i = s1_r * t1_i + s1_i * t1_r
-			
+
 			var r0_r = s0_r + v1_r, r0_i = s0_i + v1_i
 			var r1_r = s0_r - v1_r, r1_i = s0_i - v1_i
-			
+
 			output[2 * ((outputOffset) + (outputStride) * (i))] = r0_r, output[2 * ((outputOffset) + (outputStride) * (i)) + 1] = r0_i
 			output[2 * ((outputOffset) + (outputStride) * (i + m))] = r1_r, output[2 * ((outputOffset) + (outputStride) * (i + m)) + 1] = r1_i
 		}
 	}
-	
+
 	function butterfly3(output, outputOffset, outputStride, fStride, state, m) {
 		var t = state.twiddle
 		var m1 = m, m2 = 2 * m
 		var fStride1 = fStride, fStride2 = 2 * fStride
-		
+
 		var e = t[2 * ((0) + (fStride) * (m)) + 1]
-		
+
 		for (var i = 0; i < m; i++) {
 			var s0_r = output[2 * ((outputOffset) + (outputStride) * (i))], s0_i = output[2 * ((outputOffset) + (outputStride) * (i)) + 1]
-			
+
 			var s1_r = output[2 * ((outputOffset) + (outputStride) * (i + m1))], s1_i = output[2 * ((outputOffset) + (outputStride) * (i + m1)) + 1]
 			var t1_r = t[2 * ((0) + (fStride1) * (i))], t1_i = t[2 * ((0) + (fStride1) * (i)) + 1]
 			var v1_r = s1_r * t1_r - s1_i * t1_i, v1_i = s1_r * t1_i + s1_i * t1_r
-			
+
 			var s2_r = output[2 * ((outputOffset) + (outputStride) * (i + m2))], s2_i = output[2 * ((outputOffset) + (outputStride) * (i + m2)) + 1]
 			var t2_r = t[2 * ((0) + (fStride2) * (i))], t2_i = t[2 * ((0) + (fStride2) * (i)) + 1]
 			var v2_r = s2_r * t2_r - s2_i * t2_i, v2_i = s2_r * t2_i + s2_i * t2_r
-			
+
 			var i0_r = v1_r + v2_r, i0_i = v1_i + v2_i
-			
+
 			var r0_r = s0_r + i0_r, r0_i = s0_i + i0_i
 			output[2 * ((outputOffset) + (outputStride) * (i))] = r0_r, output[2 * ((outputOffset) + (outputStride) * (i)) + 1] = r0_i
-			
+
 			var i1_r = s0_r - i0_r * 0.5
 			var i1_i = s0_i - i0_i * 0.5
-			
+
 			var i2_r = (v1_r - v2_r) * e
 			var i2_i = (v1_i - v2_i) * e
-			
+
 			var r1_r = i1_r - i2_i
 			var r1_i = i1_i + i2_r
 			output[2 * ((outputOffset) + (outputStride) * (i + m1))] = r1_r, output[2 * ((outputOffset) + (outputStride) * (i + m1)) + 1] = r1_i
-			
+
 			var r2_r = i1_r + i2_i
 			var r2_i = i1_i - i2_r
 			output[2 * ((outputOffset) + (outputStride) * (i + m2))] = r2_r, output[2 * ((outputOffset) + (outputStride) * (i + m2)) + 1] = r2_i
 		}
 	}
-	
+
 	function butterfly4(output, outputOffset, outputStride, fStride, state, m) {
 		var t = state.twiddle
 		var m1 = m, m2 = 2 * m, m3 = 3 * m
 		var fStride1 = fStride, fStride2 = 2 * fStride, fStride3 = 3 * fStride
-		
+
 		for (var i = 0; i < m; i++) {
 			var s0_r = output[2 * ((outputOffset) + (outputStride) * (i))], s0_i = output[2 * ((outputOffset) + (outputStride) * (i)) + 1]
-			
+
 			var s1_r = output[2 * ((outputOffset) + (outputStride) * (i + m1))], s1_i = output[2 * ((outputOffset) + (outputStride) * (i + m1)) + 1]
 			var t1_r = t[2 * ((0) + (fStride1) * (i))], t1_i = t[2 * ((0) + (fStride1) * (i)) + 1]
 			var v1_r = s1_r * t1_r - s1_i * t1_i, v1_i = s1_r * t1_i + s1_i * t1_r
-			
+
 			var s2_r = output[2 * ((outputOffset) + (outputStride) * (i + m2))], s2_i = output[2 * ((outputOffset) + (outputStride) * (i + m2)) + 1]
 			var t2_r = t[2 * ((0) + (fStride2) * (i))], t2_i = t[2 * ((0) + (fStride2) * (i)) + 1]
 			var v2_r = s2_r * t2_r - s2_i * t2_i, v2_i = s2_r * t2_i + s2_i * t2_r
-			
+
 			var s3_r = output[2 * ((outputOffset) + (outputStride) * (i + m3))], s3_i = output[2 * ((outputOffset) + (outputStride) * (i + m3)) + 1]
 			var t3_r = t[2 * ((0) + (fStride3) * (i))], t3_i = t[2 * ((0) + (fStride3) * (i)) + 1]
 			var v3_r = s3_r * t3_r - s3_i * t3_i, v3_i = s3_r * t3_i + s3_i * t3_r
-			
+
 			var i0_r = s0_r + v2_r, i0_i = s0_i + v2_i
 			var i1_r = s0_r - v2_r, i1_i = s0_i - v2_i
 			var i2_r = v1_r + v3_r, i2_i = v1_i + v3_i
 			var i3_r = v1_r - v3_r, i3_i = v1_i - v3_i
-			
+
 			var r0_r = i0_r + i2_r, r0_i = i0_i + i2_i
-			
+
 			if (state.inverse) {
 				var r1_r = i1_r - i3_i
 				var r1_i = i1_i + i3_r
@@ -118,9 +122,9 @@ void function (namespace) {
 				var r1_r = i1_r + i3_i
 				var r1_i = i1_i - i3_r
 			}
-			
+
 			var r2_r = i0_r - i2_r, r2_i = i0_i - i2_i
-			
+
 			if (state.inverse) {
 				var r3_r = i1_r + i3_i
 				var r3_i = i1_i - i3_r
@@ -128,49 +132,49 @@ void function (namespace) {
 				var r3_r = i1_r - i3_i
 				var r3_i = i1_i + i3_r
 			}
-			
+
 			output[2 * ((outputOffset) + (outputStride) * (i))] = r0_r, output[2 * ((outputOffset) + (outputStride) * (i)) + 1] = r0_i
 			output[2 * ((outputOffset) + (outputStride) * (i + m1))] = r1_r, output[2 * ((outputOffset) + (outputStride) * (i + m1)) + 1] = r1_i
 			output[2 * ((outputOffset) + (outputStride) * (i + m2))] = r2_r, output[2 * ((outputOffset) + (outputStride) * (i + m2)) + 1] = r2_i
 			output[2 * ((outputOffset) + (outputStride) * (i + m3))] = r3_r, output[2 * ((outputOffset) + (outputStride) * (i + m3)) + 1] = r3_i
 		}
 	}
-	
+
 	function butterfly(output, outputOffset, outputStride, fStride, state, m, p) {
 		var t = state.twiddle, n = state.n, scratch = new Float64Array(2 * p)
-		
+
 		for (var u = 0; u < m; u++) {
 			for (var q1 = 0, k = u; q1 < p; q1++, k += m) {
 				var x0_r = output[2 * ((outputOffset) + (outputStride) * (k))], x0_i = output[2 * ((outputOffset) + (outputStride) * (k)) + 1]
 				scratch[2 * (q1)] = x0_r, scratch[2 * (q1) + 1] = x0_i
 			}
-			
+
 			for (var q1 = 0, k = u; q1 < p; q1++, k += m) {
 				var tOffset = 0
-				
+
 				var x0_r = scratch[2 * (0)], x0_i = scratch[2 * (0) + 1]
 				output[2 * ((outputOffset) + (outputStride) * (k))] = x0_r, output[2 * ((outputOffset) + (outputStride) * (k)) + 1] = x0_i
-				
+
 				for (var q = 1; q < p; q++) {
 					tOffset = (tOffset + fStride * k) % n
-					
+
 					var s0_r = output[2 * ((outputOffset) + (outputStride) * (k))], s0_i = output[2 * ((outputOffset) + (outputStride) * (k)) + 1]
-					
+
 					var s1_r = scratch[2 * (q)], s1_i = scratch[2 * (q) + 1]
 					var t1_r = t[2 * (tOffset)], t1_i = t[2 * (tOffset) + 1]
 					var v1_r = s1_r * t1_r - s1_i * t1_i, v1_i = s1_r * t1_i + s1_i * t1_r
-					
+
 					var r0_r = s0_r + v1_r, r0_i = s0_i + v1_i
 					output[2 * ((outputOffset) + (outputStride) * (k))] = r0_r, output[2 * ((outputOffset) + (outputStride) * (k)) + 1] = r0_i
 				}
 			}
 		}
 	}
-	
+
 	function work(output, outputOffset, outputStride, f, fOffset, fStride, inputStride, factors, state) {
 		var p = factors.shift()
 		var m = factors.shift()
-		
+
 		if (m == 1) {
 			for (var i = 0; i < p * m; i++) {
 				var x0_r = f[2 * ((fOffset) + (fStride * inputStride) * (i))], x0_i = f[2 * ((fOffset) + (fStride * inputStride) * (i)) + 1]
@@ -181,7 +185,7 @@ void function (namespace) {
 				work(output, outputOffset + outputStride * i * m, outputStride, f, fOffset + i * fStride * inputStride, fStride * p, inputStride, factors.slice(), state)
 			}
 		}
-		
+
 		switch (p) {
 			case 2: butterfly2(output, outputOffset, outputStride, fStride, state, m); break
 			case 3: butterfly3(output, outputOffset, outputStride, fStride, state, m); break
@@ -189,42 +193,42 @@ void function (namespace) {
 			default: butterfly(output, outputOffset, outputStride, fStride, state, m, p); break
 		}
 	}
-	
+
 	var complex = function (n, inverse) {
 		if (arguments.length < 2) {
 			throw new RangeError("You didn't pass enough arguments, passed `" + arguments.length + "'")
 		}
-		
+
 		var n = ~~n, inverse = !!inverse
-		
+
 		if (n < 1) {
 			throw new RangeError("n is outside range, should be positive integer, was `" + n + "'")
 		}
-		
+
 		var state = {
 			n: n,
 			inverse: inverse,
-			
+
 			factors: [],
 			twiddle: new Float64Array(2 * n),
 			scratch: new Float64Array(2 * n)
 		}
-		
+
 		var t = state.twiddle, theta = 2 * Math.PI / n
-		
+
 		for (var i = 0; i < n; i++) {
 			if (inverse) {
 				var phase =  theta * i
 			} else {
 				var phase = -theta * i
 			}
-			
+
 			t[2 * (i)] = Math.cos(phase)
 			t[2 * (i) + 1] = Math.sin(phase)
 		}
-		
+
 		var p = 4, v = Math.floor(Math.sqrt(n))
-		
+
 		while (n > 1) {
 			while (n % p) {
 				switch (p) {
@@ -232,54 +236,54 @@ void function (namespace) {
 					case 2: p = 3; break
 					default: p += 2; break
 				}
-				
+
 				if (p > v) {
 					p = n
 				}
 			}
-			
+
 			n /= p
-			
+
 			state.factors.push(p)
 			state.factors.push(n)
 		}
-		
+
 		this.state = state
 	}
-	
+
 	complex.prototype.simple = function (output, input, t) {
 		this.process(output, 0, 1, input, 0, 1, t)
 	}
-	
+
 	complex.prototype.process = function(output, outputOffset, outputStride, input, inputOffset, inputStride, t) {
 		var outputStride = ~~outputStride, inputStride = ~~inputStride
-		
-		var type = t == 'real' ? t : 'complex'
-		
+
+		var type = !t ? 'complex' : t
+
 		if (outputStride < 1) {
 			throw new RangeError("outputStride is outside range, should be positive integer, was `" + outputStride + "'")
 		}
-		
+
 		if (inputStride < 1) {
 			throw new RangeError("inputStride is outside range, should be positive integer, was `" + inputStride + "'")
 		}
-		
-		if (type == 'real') {
+
+		if (type == 'real' || type == 'realslow') {
 			for (var i = 0; i < this.state.n; i++) {
 				var x0_r = input[inputOffset + inputStride * i]
 				var x0_i = 0.0
-				
+
 				this.state.scratch[2 * (i)] = x0_r, this.state.scratch[2 * (i) + 1] = x0_i
 			}
-			
+
 			work(output, outputOffset, outputStride, this.state.scratch, 0, 1, 1, this.state.factors.slice(), this.state)
 		} else {
 			if (input == output) {
 				work(this.state.scratch, 0, 1, input, inputOffset, 1, inputStride, this.state.factors.slice(), this.state)
-				
+
 				for (var i = 0; i < this.state.n; i++) {
 					var x0_r = this.state.scratch[2 * (i)], x0_i = this.state.scratch[2 * (i) + 1]
-					
+
 					output[2 * ((outputOffset) + (outputStride) * (i))] = x0_r, output[2 * ((outputOffset) + (outputStride) * (i)) + 1] = x0_i
 				}
 			} else {
@@ -287,6 +291,119 @@ void function (namespace) {
 			}
 		}
 	}
-	
-	namespace.complex = complex
-}(FFT)
+
+	// http://www.katjaas.nl/realFFT/realFFT2.html
+	function realbifftstage(fdata, offset, stride, state, packed) {
+		var n, f=state.n
+
+		var flip = state.inverse ? -1 : 1
+		var normalize = state.inverse ? 1 : 0.5
+
+		for(n=state.n>>1; n>0; n--) {
+			var d0_r = fdata[2 * ((offset) + (stride) * (n))], d0_i = fdata[2 * ((offset) + (stride) * (n)) + 1]
+			var d1_r = fdata[2 * ((offset) + (stride) * (f-n))], d1_i = fdata[2 * ((offset) + (stride) * (f-n)) + 1]
+
+			var t0_r = state.twiddleReal[2 * (n)], t0_i = state.twiddleReal[2 * (n) + 1]
+
+			var x0_r = d0_r + d1_r, x0_i = d0_i + d1_i
+			var x1_r = d0_r - d1_r, x1_i = d0_i - d1_i
+
+			var t_r = (x1_r * t0_i + x0_i * t0_r) * flip
+			var t_i = (x0_i * t0_i - x1_r * t0_r) * flip
+
+			var r0_r = (x0_r + t_r) * normalize
+			var r0_i = (t_i + x1_i) * normalize
+
+			var r1_r = (x0_r - t_r) * normalize
+			var r1_i =  (t_i - x1_i) * normalize
+
+			fdata[2 * ((offset) + (stride) * (n))] = r0_r, fdata[2 * ((offset) + (stride) * (n)) + 1] = r0_i
+			fdata[2 * ((offset) + (stride) * (f-n))] = r1_r, fdata[2 * ((offset) + (stride) * (f-n)) + 1] = r1_i
+		}
+		var y0_r = fdata[2 * ((offset) + (0))], y0_i = fdata[2 * ((offset) + (0)) + 1]
+		if (packed) {
+			fdata[2 * (offset)] = y0_r + y0_i
+			fdata[2 * (offset) + 1] = y0_r - y0_i
+		} else {
+			if (state.inverse) {
+				var y1_r = fdata[2 * ((offset) + (stride) * (f))], y1_i = fdata[2 * ((offset) + (stride) * (f)) + 1]
+				fdata[2 * (offset)] = y0_r + y1_r
+				fdata[2 * (offset) + 1] = y0_r - y1_r
+			} else {
+				var y1_r = y0_r - y0_i
+				var y1_i = 0
+				y0_r = y0_r + y0_i
+				y0_i = 0
+				fdata[2 * ((offset) + (0))] = y0_r, fdata[2 * ((offset) + (0)) + 1] = y0_i
+				fdata[2 * ((offset) + (stride) * (f))] = y1_r, fdata[2 * ((offset) + (stride) * (f)) + 1] = y1_i
+			}
+		}
+	}
+
+	var real = function (n, inverse) {
+		if (n % 2 !== 0) {
+			throw new RangeError("n should be even, was `" + n + "'")
+		}
+
+		this.state = (new complex(n/2, inverse)).state
+
+		this.state.twiddleReal = new Float64Array(n)
+		this.state.scratch = new Float64Array(n+2)
+
+		var t = this.state.twiddleReal, theta = 2 * Math.PI / n
+
+		for (var i = 0; i < n; i++) {
+			if (inverse) {
+				var phase =  theta * i
+			} else {
+				var phase = -theta * i
+			}
+
+			t[2 * (i)] = Math.cos(phase)
+			t[2 * (i) + 1] = Math.sin(phase)
+		}
+	}
+
+	real.prototype.simple = function (output, input) {
+		this.process(output, 0, 1, input, 0, 1)
+	}
+	real.prototype.packed = function(output, input) {
+		this.process(output, 0, 1, input, 0, 1, true)
+	}
+	real.prototype.process = function(output, outputOffset, outputStride, input, inputOffset, inputStride, packed) {
+		if (this.state.inverse || input == output) {
+
+			for (var i = 0; i < this.state.n + (packed ? 0 : 1); i++) {
+				var x0_r = input[2 * ((inputOffset) + (inputStride) * (i))], x0_i = input[2 * ((inputOffset) + (inputStride) * (i)) + 1]
+				this.state.scratch[2 * (i)] = x0_r, this.state.scratch[2 * (i) + 1] = x0_i
+			}
+
+			if (this.state.inverse) {
+				realbifftstage(this.state.scratch, 0, 1, this.state, packed)
+			}
+
+			input = this.state.scratch
+			inputOffset = 0
+			inputStride = 1
+		}
+
+		work(output, outputOffset, outputStride, input, inputOffset, 1, inputStride, this.state.factors.slice(), this.state)
+
+		if (!this.state.inverse) realbifftstage(output, outputOffset, outputStride, this.state, packed)
+	}
+
+	var FFT = {
+		complex: complex,
+		real: real,
+		inverse: {
+			complex: function(n) {
+				return new FFT.complex(n, true)
+			},
+			real: function(n) {
+				return new FFT.real(n, true)
+			}
+		}
+	}
+
+	return FFT
+}))
